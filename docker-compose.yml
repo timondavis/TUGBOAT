@@ -1,45 +1,48 @@
 version: "3"
 services:
     web:
-        build:
-            context: .
-            dockerfile: Dockerfile.apache
-            args:
-                PHP_VERSION: "7"
+        image: bryanjlittlefield/tugboat-php:latest
         volumes:
             - ./var/log/apache2:/var/log/apache2
+            # Example of a Host Mounted Volume
             - ./var/www/html:/var/www/html
+            # Example of a Named Data Volume
+            #- web-data-volume:/var/www/html
         ports:
-            - 80:80
-            - 1080:1080
-            - 1025:1025
+            - "80:80"
+            - "443:443"
+            - "1080:1080"
+            - "2222:22"
         links:
             - db:mysql
-            - memcached:memcached
             - redis:redis
+            - mailhog:mailhog
         environment:
-            DOCUMENT_ROOT: "/var/www/html"
-            REPO_LINK: "none"
-        restart: always
+            - ROOT_USER_PASS=root
+            - DEV_USER_PASS=admin
+        restart: on-failure
     db:
-        build:
-            context: .
-            dockerfile: Dockerfile.mysql
+        image: bryanjlittlefield/tugboat-mysql:latest
         volumes:
             - ./var/lib/mysql:/var/lib/mysql
         ports:
             - 3306:3306
-        environment: 
-           MYSQL_DATABASE: "dev"
-           MYSQL_USER: "admin"
-           MYSQL_PASSWORD: "admin"
-           MYSQL_ALLOW_EMPTY_PASSWORD: "yes" 
-        restart: always
-    memcached:
-        image: memcached
-        ports:
-            - "11211:11211"
+        environment:
+            # - MYSQL_ROOT_PASSWORD
+            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+            - MYSQL_DATABASE=dev
+            - MYSQL_USER=admin
+            - MYSQL_PASSWORD=admin
+        restart: on-failure
     redis:
         image: redis
         ports:
-            - "6379:6379"
+            - 6379:6379
+    mailhog:
+        image: mailhog/mailhog
+        hostname: mailhog
+        ports:
+            - "8025:8025"
+            - "1025:1025"
+volumes:
+  web-data-volume:
