@@ -12,6 +12,25 @@
 - Using a terminal, navigate to the directory you cloned TUGBOAT into and run `docker-compose up`
 - Visit `127.0.0.1` | The web root is located locally in `/var/www/html` of your TUGBOAT directory by default. This will sync into your virtual environment
 - Happy Coding!:beers:
+
+## Quick XDEBUG 
+- SSH into box `docker exec -it [container-name] /bin/bash`
+- `vi /usr/local/etc/php/php.ini`
+- Replace xdebug with following block
+```
+[Xdebug]
+xdebug.remote_host=10.254.254.254
+xdebug.remote_autostart=1
+xdebug.idekey = PHPSTORM
+xdebug.default_enable = 0
+xdebug.remote_enable = 1
+xdebug.remote_connect_back = 0
+xdebug.profiler_enable = 1
+```
+- `apache2ctl restart`
+- You'll be kicked out of the machine at this point.  Good!
+- Run the loopback.sh script.  You'll need sudo access
+
 > More advanced access and configurations below.
 
 - - - -
