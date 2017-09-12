@@ -8,6 +8,7 @@ services:
             - ./var/www/html:/var/www/html
             # Example of a Named Data Volume
             #- web-data-volume:/var/www/html
+            - php-ini-volume:/usr/local/etc/php
         ports:
             - "80:80"
             - "443:443"
@@ -45,4 +46,4 @@ services:
             - "8025:8025"
             - "1025:1025"
 volumes:
-  web-data-volume:
+  php-ini-volume:
